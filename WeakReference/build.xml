@@ -1,20 +1,18 @@
-<!-- ====================================================================== 
-	<Project name>: <Project description>
-     ====================================================================== -->
+<project name="progs" default="test" basedir=".">
 
-<project name="project-name" default="package" basedir=".">
-
-  <description>Ant build file</description>
+  <description> 
+    Ant build file for LS
+  </description>
 
   <!--++++++++++ Properties ++++++++++-->
   <property name="src-main" location="src/main/java"/>
   <property name="src-test" location="src/test/java"/>
+  <property name="src-apps" location="src/main/apps"/>
   <property name="target"  location="target"/>
   <property name="target-classes"  location="target/classes"/>
   <property name="target-test-classes"  location="target/test-classes"/>
   <property name="target-test-reports"	location="target/test-reports"/>
-  <property name="dist-dir" location="dist"/>
-  <property name="jar-name" value="${ant.project.name}"/>
+  <property name="target-apps"	location="target/apps"/>
 
   <path id="main.extlibs.class.path">
     <fileset dir="vendor/main/lib">
@@ -31,12 +29,6 @@
 
   <!--++++++++++ Targets ++++++++++-->
 
-  <target name="package" depends="test" description="Packages the main classes into a jar" >
-    <buildnumber />
-    <jar jarfile="${dist}/${jar-name}.${build.number}.jar" basedir="${target-classes}"/>
-  </target>
-
-
   <target name="init" description ="Creates the target folders">
     <mkdir dir="${target-classes}"/>
     <mkdir dir="${target-test-classes}"/>
@@ -45,11 +37,9 @@
 
 
   <target name="clean" description="Removes the target folders" >
-    <!--delete dir="${target}" excludes="applications" verbose="true"/-->
-  	<delete includeEmptyDirs="true" failonerror="false" verbose="true" >
+    <delete includeEmptyDirs="true" failonerror="false" verbose="true" >
   	    <fileset dir="${target}" defaultexcludes="false"/>
     </delete>
-
   </target>
 
 
@@ -72,7 +62,8 @@
   </target>
 
 
-  <target name="compile-test" depends="compile-main" description="Compiles the test source" >
+  <target name="compile-test" depends="compile-main"
+        description="Compiles the test source" >
     <javac  debug="true"
             debugLevel="source"
             srcdir="${src-test}"
@@ -86,22 +77,26 @@
   </target>
 
   <target name="test" depends="compile-test" description="Runs the tests">
-    <junit printsummary="yes" haltonfailure="true" showoutput="true" >
+    <junit printsummary="on" haltonfailure="true" showoutput="true" >
       <classpath>
         <pathelement location="${target-classes}"/>
         <pathelement location="${target-test-classes}"/>
         <path refid="test.extlibs.class.path" />
       </classpath>
 
-      <formatter type="plain"/>
+      <formatter type="plain" usefile="false"/>
 
       <batchtest fork="yes" todir="${target-test-reports}" >
         <fileset dir="${src-test}">
-          <include name="**/*Test*.java"/>
-        </fileset>
-        <formatter type="xml"/>
-        <formatter type="plain" usefile="false" />
+          <include name="**/*Test*.java"/>          
+        </fileset>        
+        <formatter type="plain"/>
       </batchtest>
     </junit>
-  </target>    
+  </target>
+  
+  <target name="package" depends="test" description="Packages the main classes into a jar" >    
+    <jar jarfile="${target}/library.jar" basedir="${target-classes}"/>
+  </target>
+
 </project>
