@@ -1,3 +1,4 @@
+package WeakReference;
 
 import java.lang.ref.WeakReference;
  
